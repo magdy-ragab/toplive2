@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+
 use \App\Models\User;
 
 class UserController extends Controller
@@ -23,6 +25,8 @@ class UserController extends Controller
         return ["hello from"=>"test function", "time now is"=>date('Y-m-d H:i:s')];
     }
 # ##########################################################
+
+
     /**
      * list all users
      *
@@ -33,6 +37,8 @@ class UserController extends Controller
         return User::get();
     }
 # ##########################################################
+
+
     /**
      * store new user
      *
@@ -40,24 +46,36 @@ class UserController extends Controller
      */
     public function store()
     {
+        // dd(request());
         // Validate the request data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+        $valid = Validator::make(request()->all(),[
+            'name' => ['required','string','max:255'],
+            'mobile' => 'nullable',
+            'email' => 'string|nullable|email|max:255|unique:users',
+            'country' => 'required|max:255',
+            'gender' => 'required',
             'password' => 'required|string|min:8',
         ]);
-
-        // Create a new user instance
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        // Return the created user
-        return response()->json($user, 201);
+        if($valid->fails()) {
+            return response()->json( ["errors"=>$valid->messages(),"header_code"=>403], 403);
+        }else{
+            $attr= request()->validate([
+                'name' => ['required','string','max:255'],
+                'mobile' => 'nullable',
+                'email' => 'nullable|email|max:255|unique:users',
+                'country' => 'required|max:255',
+                'gender' => 'required',
+                'password' => 'required|string|min:8',
+            ]);
+            $attr['password']= bcrypt ($attr['password']) ;
+            // Create a new user instance
+            $user= User::create($attr);
+            return response()->json(["user_data"=>$user,"header_code"=>201], 201);
+        }
     }
 # ##########################################################
+
+
     /**
      * update user data
      *
@@ -94,6 +112,8 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+
+
     /**
      * destroy (remove) user by ID
      *
@@ -119,6 +139,8 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+
+
     /**
      * display user data
      *
@@ -129,8 +151,11 @@ class UserController extends Controller
     function show (int $id) {
         return User::findOrFail($id);
     }
+# ##########################################################
 
 # ##########################################################
+
+
     /**
      * test headers
      *
@@ -156,4 +181,6 @@ class UserController extends Controller
             die;
         }
     }
+# ##########################################################
+
 }

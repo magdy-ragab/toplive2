@@ -30,4 +30,8 @@ DELETE /users/{id} destroy users.destroy
 
 Route::get('/users/test', [UserController::class, 'test']);
 Route::get('/users', [UserController::class, 'index']);
-Route::get('/show/{id}', [UserController::class, 'show']);
+Route::get('/users/show/{id}', [UserController::class, 'show']);
+
+Route::put('/users/store', [UserController::class, 'store']);
+
+

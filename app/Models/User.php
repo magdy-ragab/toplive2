@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'mobile',
+        'country',
+        'gender'
     ];
 
     /**
@@ -41,4 +44,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+# ##########################################################
+    function get_csrf() {
+        return csrf_token() ;
+    }
 }
