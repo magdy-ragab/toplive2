@@ -7,6 +7,17 @@ use \App\Models\User;
 
 class UserController extends Controller
 {
+    function __construct() {
+        if ( $rst = $this->testHeaders() ) {
+            return $rst;
+        }
+    }
+
+# ##########################################################
+    function test() {
+        return ["hello from"=>"test function", "time now is"=>date('Y-m-d H:i:s')];
+    }
+# ##########################################################
     public function index()
     {
         return User::get();
@@ -77,8 +88,30 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
     }
-    # ##########################################################
+# ##########################################################
     function show (int $id) {
         return User::findOrFail($id);
+    }
+
+# ##########################################################
+    private function testHeaders() {
+        $headers = (array) request()->header();
+        //406 Not Acceptable
+            // The requested resource is capable of generating only content not acceptable according
+            // to the Accept headers sent in the request
+        if ( ! array_key_exists("app-name",$headers)  || ! array_key_exists("app-key",$headers) ) {
+            header('Content-type: text/json');
+            http_response_code(406);
+            echo json_encode(["msg"=>"KEYS ARE MISSING","header_code"=>406]);
+            die;
+        }elseif(
+            current($headers['app-name']) != env('APP_NAME') ||
+            current($headers['app-key'])!= env('APP_KEY')
+        ) {
+            header('Content-type: text/json');
+            http_response_code(406);
+            echo json_encode(["msg"=>"WRONG KEY VALUES","header_code"=>406], 406);
+            die;
+        }
     }
 }
