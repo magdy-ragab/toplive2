@@ -14,15 +14,30 @@ class UserController extends Controller
     }
 
 # ##########################################################
+    /**
+     * test , playground, check is file has no errors
+     *
+     * @return  array
+     */
     function test() {
         return ["hello from"=>"test function", "time now is"=>date('Y-m-d H:i:s')];
     }
 # ##########################################################
+    /**
+     * list all users
+     *
+     * @return  array user list
+     */
     public function index()
     {
         return User::get();
     }
 # ##########################################################
+    /**
+     * store new user
+     *
+     * @return  array new created user
+     */
     public function store()
     {
         // Validate the request data
@@ -43,7 +58,15 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 # ##########################################################
-    public function update(Request $request, $id)
+    /**
+     * update user data
+     *
+     * @param   Request  $request
+     * @param   int   $id       user.id
+     *
+     * @return  array        success updated user | error message
+     */
+    public function update(Request $request, int $id)
     {
         // Find the user by id
         $user = User::find($id);
@@ -71,7 +94,14 @@ class UserController extends Controller
         }
     }
 # ##########################################################
-    public function destroy($id)
+    /**
+     * destroy (remove) user by ID
+     *
+     * @param   int  $id  user.id
+     *
+     * @return  array    message
+     */
+    public function destroy(int $id)
     {
         // Find the user by id
         $user = User::find($id);
@@ -89,13 +119,25 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+    /**
+     * display user data
+     *
+     * @param   int  $id  user.id
+     *
+     * @return  object    user data
+     */
     function show (int $id) {
         return User::findOrFail($id);
     }
 
 # ##########################################################
+    /**
+     * test headers
+     *
+     * @return  void
+     */
     private function testHeaders() {
-        $headers = (array) request()->header();
+        $headers = request()->header();
         //406 Not Acceptable
             // The requested resource is capable of generating only content not acceptable according
             // to the Accept headers sent in the request
