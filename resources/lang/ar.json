@@ -7,6 +7,7 @@
     "Update your account's profile information and email address.": "تحديث اسم المستخدم و البريد الإلكتروني",
     "Name": "الاسم",
     "Email": "البريد الإلكتروني",
+    "Email Address": "البريد الإلكتروني",
     "Your email address is unverified.": "لم يتم تأكيد البريد الإلكتروني",
     "Click here to re-send the verification email.": "إضغظ هنا لإعادة إرسال رسالة تأكيد البريد الإلكتروني",
     "A new verification link has been sent to your email address.": "تم إرسال رابط تأكيد البريد الإلكتروني على البريد الإلكتروني",
@@ -17,6 +18,7 @@
     "Current Password": "كلمة المرور الحالية",
     "New Password": "كلمة المرور الجديدة",
     "Confirm Password": "تأكيد كلمة المرور",
+
     "Delete Account": "حذف الحساب",
     "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "بمجرد حذفك للحساب كل ماهو مرتبط به سيتم حذفه بشكل نهائي و غير قابل للإستعادة.",
     "Are you sure you want to delete your account?": "هل ترغب فعلاً بحذف الحساب بشكل نهائي؟",
@@ -24,8 +26,11 @@
     "Password": "كلمةالمرور",
     "Cancel": "إلغاء",
     "Remember me": "تذكرني",
+    "Remember Me": "تذكرني",
     "Forgot your password?": "نسيت كلمة السر؟",
+    "Forgot Your Password?": "نسيت كلمة السر؟",
     "Log in": "تسجيل الدخول",
+    "Login": "تسجيل الدخول",
     "Confirm": "يتأكد",
     "Already registered?": "مسجل بالفعل؟",
     "Register": "يسجل",
@@ -35,5 +40,12 @@
     "Resend Verification Email": "إعادة ارسال بريد التحقق",
     "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "نسيت كلمة السر؟لا مشكلة.فقط أخبرنا عن عنوان بريدك الإلكتروني وسنرسل لك بريدًا إلكترونيًا إلى رابط إعادة تعيين كلمة المرور يسمح لك باختيار كلمة مرور جديدة.",
     "Email Password Reset Link": "رابط إعادة تعيين كلمة مرور البريد الإلكتروني",
-    "This is a secure area of the application. Please confirm your password before continuing.":"هذه منطقة آمنة من التطبيق.يرجى تأكيد كلمة المرور الخاصة بك قبل المتابعة."
+    "This is a secure area of the application. Please confirm your password before continuing.":"هذه منطقة آمنة من التطبيق.يرجى تأكيد كلمة المرور الخاصة بك قبل المتابعة.",
+    "Verify Your Email Address":"تحقق من عنوان بريدك الإلكتروني",
+    "A fresh verification link has been sent to your email address.": "تم إرسال رابط التحقق الجديد إلى عنوان بريدك الإلكتروني.",
+    "Before proceeding, please check your email for a verification link.":"قبل المتابعة ، يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق.",
+    "If you did not receive the email": "إذا لم تتلق البريد الإلكتروني",
+    "click here to request another":"انقر هنا لطلب آخر",
+    "Please confirm your password before continuing.": "يرجى تأكيد كلمة المرور الخاصة بك قبل المتابعة.",
+    "Send Password Reset Link": "إرسال رابط إعادة تعيين كلمة السر"
 }
