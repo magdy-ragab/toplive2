@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -44,8 +46,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    protected $with=[
+        'otp'
+    ];
 # ##########################################################
     function get_csrf() {
         return csrf_token() ;
+    }
+# ##########################################################
+    function otp() {
+        return $this
+            ->hasOne(Otp::class)
+            ->where(
+                [
+                    [
+                        "created_at" ,
+                        '>=',
+                        Carbon::now()
+                            ->subMinutes(30)
+                            ->toDateTimeString()
+                    ]
+                ]
+            );
     }
 }

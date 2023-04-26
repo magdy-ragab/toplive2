@@ -24,5 +24,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/users/get_csrf', [User::class, 'get_csrf']);
 Route::get('/users/current', [UserController::class, 'getCurrentUser']);
+Route::post('/users/loginById', [UserController::class, 'appLoginById']);
 
 Route::put('/users/store', [UserController::class, 'store']);
+Route::post('/users/loginByEmail', [UserController::class, 'loginEmail']);

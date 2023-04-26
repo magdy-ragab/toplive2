@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Otp;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
@@ -72,6 +73,9 @@ class UserController extends Controller
             // Create a new user instance
             $user= User::create($attr);
             // login user
+            if ( $attr['mobile'] != null ) {
+                Otp::create(['user_id'=>$user->id, "otp"=> rand(999,9999) ]);
+            }
             $this->loginById($user->id);
             return response()->json(["user_data"=>$user,"header_code"=>201], 201);
         }
@@ -155,8 +159,58 @@ class UserController extends Controller
         return User::findOrFail($id);
     }
 # ##########################################################
+    /**
+     * get current loggedin user
+     *
+     * @return  array  userdata
+     */
     function getCurrentUser() {
-        return ["is_logged"=>Auth::check(), "user"=> Auth::user()];
+        return ["is_logged"=>Auth::check(), "user"=> Auth::user(), "header_code"=>200];
+    }
+# ##########################################################
+    /**
+     * login user by id, useful when login by facebook,twitter,appleID
+     *
+     *
+     * @method POST
+     * @param int id user.id
+     * @param string _token
+     *
+     */
+    public function appLoginById()
+    {
+        $id= request('id');
+        if ( ! $id ) return response()->json(["msg"=> "missing id", "header_code"=>401], 401);
+        if ( $this->loginById($id) ) {
+            return $this->getCurrentUser();
+        }
+        return response()->json(["msg"=> "not logged in.invalid id", "header_code"=>401], 401);
+    }
+# ##########################################################
+    /**
+     * login user by email and password
+     *
+     * @method POST
+     * @param string $email user email
+     * @param string password user password
+     * @param string _token
+     *
+     */
+    public function loginEmail()
+    {
+        $email= request('email');
+        $password= request('password');
+        $valid = Validator::make(request()->all(),[
+            'email' => 'required|email|max:255|exists:users,email',
+            'password' => 'required|string',
+        ]);
+        if($valid->fails()) {
+            return response()->json( ["errors"=>$valid->messages(),"header_code"=>403], 403);
+        }else{
+            $ret = Auth::attempt(['email'=>$email,"password"=>$password]);
+            if ( $ret ) return $this->getCurrentUser();
+            else return response()->json( ["msg"=>"invalid email or password","header_code"=>403], 403);
+        }
     }
 # ##########################################################
 
@@ -187,8 +241,10 @@ class UserController extends Controller
         }
     }
 # ##########################################################
-    private function loginById( int $id ) {
+    private function loginById( int $id ) : bool {
+        $user= User::find($id); if ( $user === null ) return false;
         Auth::loginUsingId($id);
+        return Auth::check();
     }
 
 }
