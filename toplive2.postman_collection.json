@@ -1,0 +1,305 @@
+{
+	"info": {
+		"_postman_id": "2cabddc0-dc84-4e8d-935a-13c36106e841",
+		"name": "toplive2",
+		"description": "All functions in camelCase",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16899061"
+	},
+	"item": [
+		{
+			"name": "users.test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/test",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"test"
+					]
+				},
+				"description": "test , playground, check is file has no errors"
+			},
+			"response": []
+		},
+		{
+			"name": "users.get_csrf",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}users/get_csrf",
+					"host": [
+						"{{base_url}}users"
+					],
+					"path": [
+						"get_csrf"
+					]
+				},
+				"description": "retrive CSRF field value"
+			},
+			"response": []
+		},
+		{
+			"name": "user.store",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "sadad",
+							"type": "text"
+						},
+						{
+							"key": "mobile",
+							"value": "55124566987",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "zcnxjzhj11@aaaaaa.com",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "eg",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "f",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "ssdsadsada",
+							"type": "text"
+						},
+						{
+							"key": "_token",
+							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"description": "get the token from url /users/get_csrf",
+							"type": "text"
+						},
+						{
+							"key": "_method",
+							"value": "put",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}users/store",
+					"host": [
+						"{{base_url}}users"
+					],
+					"path": [
+						"store"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "users.current",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}users/current",
+					"host": [
+						"{{base_url}}users"
+					],
+					"path": [
+						"current"
+					]
+				},
+				"description": "get current loggedin user"
+			},
+			"response": []
+		},
+		{
+			"name": "users.loginById",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "20",
+							"type": "text"
+						},
+						{
+							"key": "_token",
+							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}users/loginById",
+					"host": [
+						"{{base_url}}users"
+					],
+					"path": [
+						"loginById"
+					]
+				},
+				"description": "StartFragment\n\nlogin user by id, useful when login by facebook,twitter,appleID \n\n@method POST\n\n@param int id user.id\n\n@param string _token\n\nEndFragment"
+			},
+			"response": []
+		},
+		{
+			"name": "users.loginByEmail",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "admin@toplive.click",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin!123!!",
+							"type": "text"
+						},
+						{
+							"key": "_token",
+							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}users/loginByEmail",
+					"host": [
+						"{{base_url}}users"
+					],
+					"path": [
+						"loginByEmail"
+					]
+				},
+				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
+			},
+			"response": []
+		}
+	]
+}
