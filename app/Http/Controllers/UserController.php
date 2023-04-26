@@ -71,8 +71,8 @@ class UserController extends Controller
             $attr['password']= bcrypt ($attr['password']) ;
             // Create a new user instance
             $user= User::create($attr);
-            // login use
-            Auth::login ($user);
+            // login user
+            $this->loginById($user->id);
             return response()->json(["user_data"=>$user,"header_code"=>201], 201);
         }
     }
@@ -155,7 +155,9 @@ class UserController extends Controller
         return User::findOrFail($id);
     }
 # ##########################################################
-
+    function getCurrentUser() {
+        return ["is_logged"=>Auth::check(), "user"=> Auth::user()];
+    }
 # ##########################################################
 
 
@@ -185,5 +187,8 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+    private function loginById( int $id ) {
+        Auth::loginUsingId($id);
+    }
 
 }

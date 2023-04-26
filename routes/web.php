@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 /*
@@ -22,3 +23,6 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/users/get_csrf', [User::class, 'get_csrf']);
+Route::get('/users/current', [UserController::class, 'getCurrentUser']);
+
+Route::put('/users/store', [UserController::class, 'store']);
