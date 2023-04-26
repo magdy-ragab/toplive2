@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 use \App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -70,6 +71,8 @@ class UserController extends Controller
             $attr['password']= bcrypt ($attr['password']) ;
             // Create a new user instance
             $user= User::create($attr);
+            // login use
+            Auth::login ($user);
             return response()->json(["user_data"=>$user,"header_code"=>201], 201);
         }
     }
