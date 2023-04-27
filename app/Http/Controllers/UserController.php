@@ -75,7 +75,7 @@ class UserController extends Controller
             $user= User::create($attr);
             // login user
             if ( $attr['mobile'] != null ) {
-                Otp::create(['user_id'=>$user->id, "otp"=> rand(999,9999) ]);
+                $this->generateOtp($user->id);
             }
             $this->loginById($user->id);
             return response()->json(["user_data"=>$user,"header_code"=>201], 201);
@@ -246,6 +246,30 @@ class UserController extends Controller
     }
 # ##########################################################
 
+    public function newOtp()
+    {
+        $valid = Validator::make(request()->all(),[
+            'id' => ['required','integer'],
+        ]);
+        if($valid->fails()) {
+            return response()->json( ["errors"=>$valid->messages(),"header_code"=>404], 404);
+        }else{
+            $attr= request()->validate([
+                'id' => ['required','integer'],
+            ]);
+            $user= User::find(request('id'));
+            // login user
+            if ( $user == null ) {
+                return response()->json( ["msg"=>"thios user doesn't exist","header_code"=>404], 404);
+            }else{
+                $otp= $this->generateOtp($user->id);
+                return response()->json(["opt"=>$otp,"header_code"=>201], 201);
+            }
+
+        }
+    }
+# ##########################################################
+
 
 
     /**
@@ -274,10 +298,21 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+
+    /* **********************************************************
+       * [PRIVATE METHODS ] **************************************
+       ***********************************************************
+    */
     private function loginById( int $id ) : bool {
         $user= User::find($id); if ( $user === null ) return false;
         Auth::loginUsingId($id);
         return Auth::check();
     }
 
+    # ##########################################################
+
+    private function generateOtp(int $user_id) {
+        Otp::where(["user_id"=>$user_id])->delete();
+        return Otp::create(['user_id'=>$user_id, "otp"=> rand(999,9999) ]);
+    }
 }
