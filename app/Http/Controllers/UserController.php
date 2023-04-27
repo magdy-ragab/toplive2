@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 use \App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -108,7 +109,7 @@ class UserController extends Controller
             // Update the user attributes
             $user->name = $request->name ?? $user->name;
             $user->email = $request->email ?? $user->email;
-            $user->password = $request->password ? Hash::make($request->password) : $user->password;
+            $user->password = $request->password ? bcrypt($request->password) : $user->password;
             $user->save();
 
             // Return the updated user
@@ -213,6 +214,38 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+    /**
+     * verify otp code
+     *
+     * @method POST
+     * @param int mobile
+     * @param int otp
+     * @param string _token
+     *
+     * @return void
+     */
+    function verifyOtp() {
+        $mobile= request('mobile');
+        $otp= request('otp');
+        $user= User::where(["mobile"=>$mobile])->first();
+        if ( $user == null ){
+            return response()->json( ["msg"=>"Not a valid user","header_code"=>404], 404);
+        }else if ($user->otp == null) {
+            return response()->json( ["msg"=>"Not a valid OTP","header_code"=>404], 404);
+        }else if ( $user->otp?->otp != $otp ) {
+            return response()->json( ["msg"=>"Wrong OTP value","header_code"=>404], 404);
+        }else {
+            Otp::where("id",$user->otp->id)->delete();
+            User::where("id",$user->id)->update(["email_verified_at"=>Carbon::now()]);
+            return response()->json( [
+                "msg"=>"Otp verified" ,
+                "user"=>User::where(["mobile"=>$mobile])->first() ,
+                "header_code"=>200
+            ], 200);
+        }
+    }
+# ##########################################################
+
 
 
     /**

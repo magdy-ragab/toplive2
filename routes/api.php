@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
- return $request->user();
+    return $request->user();
 });
 
 /*
@@ -31,6 +31,8 @@ DELETE /users/{id} destroy users.destroy
 Route::get('/users/test', [UserController::class, 'test']);
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/show/{id}', [UserController::class, 'show']);
+
+Route::post('/users/verifyOtp', [UserController::class,'verifyOtp']);
 
 
 
