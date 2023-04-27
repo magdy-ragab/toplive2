@@ -230,6 +230,8 @@ class UserController extends Controller
         $user= User::where(["mobile"=>$mobile])->first();
         if ( $user == null ){
             return response()->json( ["msg"=>"Not a valid user","header_code"=>404], 404);
+        }else if( $user->email_verified_at != null ){
+            return response()->json( ["msg"=>"already verified","header_code"=>410], 410);
         }else if ($user->otp == null) {
             return response()->json( ["msg"=>"Not a valid OTP","header_code"=>404], 404);
         }else if ( $user->otp?->otp != $otp ) {
