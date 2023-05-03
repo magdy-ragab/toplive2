@@ -80,7 +80,7 @@ class UserController extends Controller
             $this->loginById($user->id);
 
             return response()->json([
-                'token'     => $user->createToken('MyApp')->plainTextToken ,
+                'token'     => $user->createToken('app')->plainTextToken ,
                 'user_data' => User::find($user->id) ,
                 'otp'       => (int) request('otp') ,
             ], 201);
@@ -90,6 +90,114 @@ class UserController extends Controller
         }
     }
 # ##########################################################
+    /**
+     * Login or register a user using Facebook credentials.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function loginByFacebook(Request $request)
+    {
+        // Validate the request parameters
+        $validator = Validator::make($request->all(), [
+            'email' => ['nullable', 'email'],
+            'mobile' => ['nullable', 'numeric'],
+            'name' => ['required', 'string'],
+            'pic' => ['nullable', 'string'],
+        ]);
+
+        // If neither email nor phone is provided, return an error response
+        if (!$request->has('email') && !$request->has('mobile')) {
+            return response()->json(['msg' => 'Either email or mobile is required'], 400);
+        }
+        // If validation fails, return an error response
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 400);
+        }
+
+        // Find the user with the given email or mobile number
+        $user = null;
+        if ($request->has('email')) {
+            $user = User::where('email', $request->email)->first();
+        } elseif ($request->has('mobile')) {
+            $user = User::where('mobile', $request->mobile)->first();
+        }
+
+        // If the user doesn't exist, create a new user
+        if (!$user) {
+            $user = User::create([
+                'name'                => $request->name,
+                'email'               => $request->email,
+                'mobile'              => $request->mobile,
+                'pic'                 => $request->pic,
+                "email_verified_at"   => now() ,
+                'login_by'            => 'facebook',
+            ]);
+            $status = 201; // Created
+        } else {
+            $user->update([ "pic" => $request->pic] );
+            $status = 200; // OK
+        }
+
+        // Generate a new token for the user
+        $token = $user->createToken('app')->plainTextToken;
+
+        // Return a success response with the user data and token
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], $status);
+    }
+# ##########################################################
+    /**
+     * Login or register a user using Google credentials.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function loginByGoogle(Request $request)
+    {
+        // Validate the request parameters
+        $validator = Validator::make($request->all(), [
+            'email' => ['nullable', 'email'],
+            'name' => ['required', 'string'],
+            'pic' => ['nullable', 'string'],
+        ]);
+
+        // If validation fails, return an error response
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 400);
+        }
+
+        // Find the user with the given email
+        $user = User::where('email', $request->email)->first();
+
+        // If the user doesn't exist, create a new user
+        if (!$user) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'pic' => $request->pic,
+                'login_by' => 'google',
+                'email_verified_at' => now(),
+            ]);
+            $status = 201; // Created
+        } else {
+            $status = 200; // OK
+        }
+
+        // Generate a new token for the user
+        $token = $user->createToken('app')->plainTextToken;
+
+        // Return a success response with the user data and token
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], $status);
+    }
+# ##########################################################
+
+
 
 
     /**
@@ -270,54 +378,74 @@ class UserController extends Controller
      * @method POST
      * @param int mobile
      * @param int otp
-     * @param string _token
      *
      * @return void
      */
-    function verifyOtp() {
-        $mobile= request('mobile');
-        $otp= request('otp');
-        $user= User::where(["mobile"=>$mobile])->first();
-        if ( $user == null ){
-            return response()->json( ["msg"=>"Not a valid user","header_code"=>404], 404);
-        }else if( $user->email_verified_at != null ){
-            return response()->json( ["msg"=>"already verified","header_code"=>410], 410);
-        }else if ($user->otp == null) {
-            return response()->json( ["msg"=>"Not a valid OTP","header_code"=>404], 404);
-        }else if ( $user->otp?->otp != $otp ) {
-            return response()->json( ["msg"=>"Wrong OTP value","header_code"=>404], 404);
-        }else {
-            Otp::where("id",$user->otp->id)->delete();
-            User::where("id",$user->id)->update(["email_verified_at"=>Carbon::now()]);
-            return response()->json( [
-                "msg"=>"Otp verified" ,
-                "user"=>User::where(["mobile"=>$mobile])->first() ,
-                "header_code"=>200
-            ], 200);
+    function verifyOtp(Request $request) {
+        $mobile = $request->mobile;
+        $otp = $request->otp;
+
+        // Find the user with the given mobile number
+        $user = User::where('mobile', $mobile)->first();
+
+        // If the user doesn't exist, return an error response
+        if (!$user) {
+            return response()->json(['msg' => 'Invalid user'], 404);
         }
+
+        // If the user has already been verified, return an error response
+        if ($user->email_verified_at) {
+            return response()->json(['msg' => 'User already verified'], 410);
+        }
+
+        // If the user doesn't have an OTP or the OTP value is incorrect, return an error response
+        // return($user);
+        if ( !$user->otp || ! $user->otp->otp ) {
+            return response()->json(['msg' => 'Invalid OTP'], 404);
+        }
+
+        // Delete the OTP and update the user's email_verified_at field
+        $user->otp->delete();
+        $user->update(['email_verified_at' => now()]);
+
+        // Return a success response with the user data and a token
+        return response()->json([
+            'msg' => 'OTP verified',
+            'user' => $user,
+            'token' => $user->createToken('app')->plainTextToken,
+        ], 200);
+
     }
 # ##########################################################
-
+    /**
+     * Generate a new OTP for the user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function newOtp()
     {
-        $valid = Validator::make(request()->all(),[
-            'id' => ['required','integer'],
+        // Validate the request parameters
+        $validator = Validator::make(request()->all(), [
+            'mobile' => ['required'],
         ]);
-        if($valid->fails()) {
-            return response()->json( ["errors"=>$valid->messages(),"header_code"=>404], 404);
-        }else{
-            $attr= request()->validate([
-                'id' => ['required','integer'],
-            ]);
-            $user= User::find(request('id'));
-            // login user
-            if ( $user == null ) {
-                return response()->json( ["msg"=>"thios user doesn't exist","header_code"=>404], 404);
-            }else{
-                $otp= $this->generateOtp($user->id);
-                return response()->json(["opt"=>$otp,"header_code"=>201], 201);
-            }
 
+        // If validation fails, return an error response
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 404);
+        } else {
+            // Find the user with the given mobile number
+            $user = User::where('mobile', request('mobile'))->first();
+
+            // If the user doesn't exist, return an error response
+            if (!$user) {
+                return response()->json(['msg' => 'This user does not exist'], 404);
+            } else {
+                // Generate a new OTP for the user
+                $otp = $this->generateOtp($user->id , request('otp')?request('otp'):0);
+
+                // Return a success response with the OTP
+                return response()->json(['otp' => $otp], 201);
+            }
         }
     }
 # ##########################################################
@@ -365,6 +493,7 @@ class UserController extends Controller
 
     private function generateOtp(int $user_id, int $otp=0) {
         Otp::where(["user_id"=>$user_id])->delete();
-        return Otp::create(['user_id'=>$user_id, "otp"=>  ($otp !== 0 ? $otp : rand(999,9999)) ]);
+        $otp = ($otp !== 0 ? $otp : rand(999,9999)) ;
+        return Otp::create(['user_id'=>$user_id, "otp"=>  $otp ]);
     }
 }

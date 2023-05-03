@@ -32,7 +32,9 @@ Route::get('/users/test', [UserController::class, 'test']);
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/show/{id}', [UserController::class, 'show']);
 
-Route::any('/users/storeByPhone', [UserController::class, 'storeByPhone']);
+Route::put('/users/storeByPhone', [UserController::class, 'storeByPhone']);
+Route::put('/users/loginByFacebook', [UserController::class, 'loginByFacebook']);
+Route::put('/users/loginByGoogle', [UserController::class, 'loginByGoogle']);
 
 Route::post('/users/verifyOtp', [UserController::class,'verifyOtp']);
 Route::post('/users/newOtp', [UserController::class,'newOtp']);

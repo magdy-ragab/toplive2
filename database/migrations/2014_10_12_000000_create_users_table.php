@@ -21,7 +21,8 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->enum('gender',['m','f'])->default('m');
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
+            $table->string('login_by')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

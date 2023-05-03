@@ -27,7 +27,8 @@ class User extends Authenticatable
         'country',
         'gender',
         'pic',
-        'birth_date'
+        'birth_date',
+        'login_by'
     ];
 
     /**
