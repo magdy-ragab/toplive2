@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "2cabddc0-dc84-4e8d-935a-13c36106e841",
+		"_postman_id": "83a99760-9665-48f4-8358-f1c5aef424e0",
 		"name": "toplive2",
 		"description": "All functions in camelCase",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "16899061"
+		"_exporter_id": "16899061",
+		"_collection_link": "https://speeding-rocket-625166.postman.co/workspace/d4e153dc-7613-41ca-9b9a-3f0d88bfd691/collection/16899061-83a99760-9665-48f4-8358-f1c5aef424e0?action=share&creator=16899061&source=collection_link"
 	},
 	"item": [
 		{
@@ -148,7 +149,7 @@
 						},
 						{
 							"key": "_token",
-							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"value": "KWpa48OSxLuRuQOUYmosvYt3hJ4eM4722p1byptR",
 							"description": "get the token from url /users/get_csrf",
 							"type": "text"
 						},
@@ -295,6 +296,106 @@
 					],
 					"path": [
 						"loginByEmail"
+					]
+				},
+				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
+			},
+			"response": []
+		},
+		{
+			"name": "users.verifyOtp",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "mobile",
+							"value": "55124566987",
+							"type": "text"
+						},
+						{
+							"key": "otp",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "_token",
+							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/verifyOtp",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"verifyOtp"
+					]
+				},
+				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
+			},
+			"response": []
+		},
+		{
+			"name": "users.new_otp",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "mobile",
+							"value": "55124566987",
+							"type": "text"
+						},
+						{
+							"key": "otp",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "_token",
+							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/verifyOtp",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"verifyOtp"
 					]
 				},
 				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"

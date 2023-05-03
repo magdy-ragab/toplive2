@@ -25,7 +25,9 @@ class User extends Authenticatable
         'password',
         'mobile',
         'country',
-        'gender'
+        'gender',
+        'pic',
+        'birth_date'
     ];
 
     /**
@@ -69,6 +71,7 @@ class User extends Authenticatable
                             ->toDateTimeString()
                     ]
                 ]
-            );
+            )->select('id', 'user_id', 'otp');
     }
+
 }

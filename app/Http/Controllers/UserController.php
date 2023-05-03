@@ -41,6 +41,56 @@ class UserController extends Controller
     }
 # ##########################################################
 
+    /**
+     * Store user data by phone number.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception if an error occurs while storing the image or creating the user
+     */
+    public function storeByPhone()
+    {
+
+        $validator = Validator::make(request()->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'mobile' => 'required|unique:users,mobile',
+            'pic' => 'nullable|image|max:2048', // max size of 2MB
+            'password' => 'required|string|min:8',
+            'country' => 'required|max:255',
+            'gender' => 'required',
+            "birth_date"=> ['required', 'date', 'before:today'],
+            'otp' => 'required|integer|digits_between:3,8'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 422);
+        }
+
+        try {
+            $validatedData = $validator->validated();
+            $validatedData['password'] = bcrypt($validatedData['password']);
+
+            if (request()->hasFile('pic')) {
+                $validatedData['pic'] = request()->file('pic')->store('public/users');
+            }
+
+            $user = User::create($validatedData);
+            $this->generateOtp($user->id, request('otp'));
+            $this->loginById($user->id);
+
+            return response()->json([
+                'token'     => $user->createToken('MyApp')->plainTextToken ,
+                'user_data' => User::find($user->id) ,
+                'otp'       => (int) request('otp') ,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+# ##########################################################
+
 
     /**
      * store new user
@@ -313,8 +363,8 @@ class UserController extends Controller
 
     # ##########################################################
 
-    private function generateOtp(int $user_id) {
+    private function generateOtp(int $user_id, int $otp=0) {
         Otp::where(["user_id"=>$user_id])->delete();
-        return Otp::create(['user_id'=>$user_id, "otp"=> rand(999,9999) ]);
+        return Otp::create(['user_id'=>$user_id, "otp"=>  ($otp !== 0 ? $otp : rand(999,9999)) ]);
     }
 }
