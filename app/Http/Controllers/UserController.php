@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use \App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -241,43 +243,119 @@ class UserController extends Controller
     }
 # ##########################################################
 
+/**
+ * Update the authenticated user's data.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function updateUserData(Request $request)
+{
+    $valid = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'mobile' => 'required|string|max:255',
+        'pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'password' => 'nullable|string|min:6',
+        'country' => 'nullable|string|max:255',
+        'gender' => 'nullable|string|max:255',
+        'birth_date' => 'nullable|date',
+    ]);
 
+    if ($valid->fails()) {
+        return response()->json([
+            'errors' => $valid->messages(),
+        ], 403);
+    }
+
+    $token = $this->getTokenFromRequest($request);
+
+    if (!$token) {
+        return response()->json([
+            'msg' => 'Token not found in request',
+        ], 401);
+    }
+
+    $user = PersonalAccessToken::findToken($token)->tokenable;
+
+    if (!$user) {
+        return response()->json([
+            'msg' => 'Invalid token',
+        ], 401);
+    }
+
+    $user->name = $request->input('name');
+    $user->mobile = $request->input('mobile');
+    $user->country = $request->input('country');
+    $user->gender = $request->input('gender');
+    $user->birth_date = $request->input('birth_date');
+
+    if ($request->hasFile('pic')) {
+        $pic = $request->file('pic');
+        $filename = time() . '_' . $pic->getClientOriginalName();
+        $pic->move(public_path('users'), $filename);
+        $user->pic = $filename;
+    } elseif (!$request->has('pic')) {
+        $user->pic = $user->old_pic;
+    }
+
+    if ($request->has('password')) {
+        $user->password = Hash::make($request->input('password'));
+    }
+
+    $user->save();
+
+    return response()->json([
+        'msg' => 'User data updated successfully',
+        'user' => $user,
+    ]);
+}
+# ##########################################################
     /**
-     * update user data
+     * Update the authenticated user's profile picture.
      *
-     * @param   Request  $request
-     * @param   int   $id       user.id
-     *
-     * @return  array        success updated user | error message
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, int $id)
+    public function updateUserImage(Request $request)
     {
-        // Find the user by id
-        $user = User::find($id);
+        $valid = Validator::make($request->all(), [
+            'pic' => 'required|image|max:2048',
+        ]);
 
-        // Check if the user exists
-        if ($user) {
-            // Validate the request data
-            $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-                'password' => 'sometimes|string|min:8',
-            ]);
-
-            // Update the user attributes
-            $user->name = $request->name ?? $user->name;
-            $user->email = $request->email ?? $user->email;
-            $user->password = $request->password ? bcrypt($request->password) : $user->password;
-            $user->save();
-
-            // Return the updated user
-            return response()->json($user, 200);
-        } else {
-            // Return an error message
-            return response()->json(['message' => 'User not found'], 404);
+        if ($valid->fails()) {
+            return response()->json([
+                'errors' => $valid->messages(),
+            ], 403);
         }
+
+        $token = $this->getTokenFromRequest($request);
+
+        if (!$token) {
+            return response()->json([
+                'msg' => 'Token not found in request',
+            ], 401);
+        }
+
+        $user = PersonalAccessToken::findToken($token)->tokenable;
+
+        if (!$user) {
+            return response()->json([
+                'msg' => 'Invalid token',
+            ], 401);
+        }
+
+
+        $user->pic = request()->file('pic')->store('public/users');
+
+        $user->save();
+
+        return response()->json([
+            'msg' => 'User image updated successfully',
+            'user' => $user,
+        ]);
     }
 # ##########################################################
+
 
 
     /**
@@ -323,8 +401,26 @@ class UserController extends Controller
      *
      * @return  array  userdata
      */
-    function getCurrentUser() {
-        return ["is_logged"=>Auth::check(), "user"=> Auth::user(), "header_code"=>200];
+    function getCurrentUser( Request $request ) {
+        $token = $request->token;
+
+    if (!$token) {
+        return response()->json([
+            'msg' => 'Token not found in request',
+        ], 401);
+    }
+
+    $user = PersonalAccessToken::findToken($token)?->tokenable;
+
+    if (!$user) {
+        return response()->json([
+            'msg' => 'Invalid token',
+        ], 401);
+    }
+
+    return response()->json([
+        'user' => $user,
+    ]);
     }
 # ##########################################################
     /**
@@ -347,28 +443,78 @@ class UserController extends Controller
     }
 # ##########################################################
     /**
-     * login user by email and password
-     *
-     * @method POST
-     * @param string $email user email
-     * @param string password user password
-     * @param string _token
-     *
-     */
-    public function loginEmail()
+         * Authenticate a user using email and password.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\JsonResponse
+         */
+    public function loginEmail(Request $request)
     {
-        $email= request('email');
-        $password= request('password');
-        $valid = Validator::make(request()->all(),[
+        $valid = Validator::make($request->all(), [
             'email' => 'required|email|max:255|exists:users,email',
             'password' => 'required|string',
         ]);
-        if($valid->fails()) {
-            return response()->json( ["errors"=>$valid->messages(),"header_code"=>403], 403);
-        }else{
-            $ret = Auth::attempt(['email'=>$email,"password"=>$password]);
-            if ( $ret ) return $this->getCurrentUser();
-            else return response()->json( ["msg"=>"invalid email or password","header_code"=>403], 403);
+
+        if ($valid->fails()) {
+            return response()->json([
+                'errors' => $valid->messages(),
+            ], 403);
+        }
+
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        $guard = Auth::guard('web');
+
+        if ($guard->attempt(['email' => $email, 'password' => $password])) {
+            $user = $guard->user();
+            $token = $user->createToken('app')->plainTextToken;
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'Invalid email or password',
+            ], 403);
+        }
+    }
+# ##########################################################
+    /**
+     * Authenticate a user using mobile number and password.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function loginByMobile(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'mobile' => 'required|string|max:255|exists:users,mobile',
+            'password' => 'required|string',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json([
+                'errors' => $valid->messages(),
+            ], 403);
+        }
+
+        $mobile = $request->input('mobile');
+        $password = $request->input('password');
+
+        $guard = Auth::guard('web');
+
+        if ($guard->attempt(['mobile' => $mobile, 'password' => $password])) {
+            $user = $guard->user();
+            $token = $user->createToken('app')->plainTextToken;
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'Invalid mobile number or password',
+            ], 403);
         }
     }
 # ##########################################################
@@ -495,5 +641,10 @@ class UserController extends Controller
         Otp::where(["user_id"=>$user_id])->delete();
         $otp = ($otp !== 0 ? $otp : rand(999,9999)) ;
         return Otp::create(['user_id'=>$user_id, "otp"=>  $otp ]);
+    }
+
+    # ##########################################################
+    private function getTokenFromRequest( ) {
+        return request('token');
     }
 }

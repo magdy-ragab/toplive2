@@ -23,7 +23,6 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/users/get_csrf', [User::class, 'get_csrf']);
-Route::get('/users/current', [UserController::class, 'getCurrentUser']);
 Route::post('/users/loginById', [UserController::class, 'appLoginById']);
 
-Route::post('/users/loginByEmail', [UserController::class, 'loginEmail']);
+
