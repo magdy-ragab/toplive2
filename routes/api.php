@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StreamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,9 @@ Route::post('/users/current', [UserController::class, 'getCurrentUser']);
 
 Route::post('/users/verifyOtp', [UserController::class,'verifyOtp']);
 Route::post('/users/newOtp', [UserController::class,'newOtp']);
+
+
+Route::post('/agoraToken', [StreamController::class,'agoraToken']);
 
 
 

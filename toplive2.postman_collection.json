@@ -5,7 +5,7 @@
 		"description": "All functions in camelCase",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "16899061",
-		"_collection_link": "https://speeding-rocket-625166.postman.co/workspace/d4e153dc-7613-41ca-9b9a-3f0d88bfd691/collection/16899061-83a99760-9665-48f4-8358-f1c5aef424e0?action=share&creator=16899061&source=collection_link"
+		"_collection_link": "https://speeding-rocket-625166.postman.co/workspace/New-Team-Workspace~d4e153dc-7613-41ca-9b9a-3f0d88bfd691/collection/16899061-83a99760-9665-48f4-8358-f1c5aef424e0?action=share&creator=16899061&source=collection_link"
 	},
 	"item": [
 		{
@@ -119,17 +119,17 @@
 					"formdata": [
 						{
 							"key": "name",
-							"value": "sadad",
+							"value": "magdy ragab",
 							"type": "text"
 						},
 						{
 							"key": "mobile",
-							"value": "55124566987",
+							"value": "01153504636",
 							"type": "text"
 						},
 						{
 							"key": "email",
-							"value": "zcnxjzhj11@aaaaaa.com",
+							"value": "developer.eye1@gmail.com",
 							"type": "text"
 						},
 						{
@@ -139,17 +139,17 @@
 						},
 						{
 							"key": "gender",
-							"value": "f",
+							"value": "m",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "ssdsadsada",
+							"value": "m12345678",
 							"type": "text"
 						},
 						{
 							"key": "_token",
-							"value": "KWpa48OSxLuRuQOUYmosvYt3hJ4eM4722p1byptR",
+							"value": "b3MSi1mP4383UViih64a7pz9jMAz2wHbCTe56Y1w",
 							"description": "get the token from url /users/get_csrf",
 							"type": "text"
 						},
@@ -174,12 +174,26 @@
 			"response": []
 		},
 		{
-			"name": "users.current",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "user.storeByPhone",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "APP_NAME",
@@ -194,14 +208,462 @@
 				],
 				"body": {
 					"mode": "formdata",
-					"formdata": []
+					"formdata": [
+						{
+							"key": "name",
+							"value": "sadad",
+							"type": "text"
+						},
+						{
+							"key": "mobile",
+							"value": "01153504636",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "magdy123",
+							"type": "text"
+						},
+						{
+							"key": "_method",
+							"value": "put",
+							"type": "text"
+						},
+						{
+							"key": "pic",
+							"type": "file",
+							"src": "/C:/xampp/htdocs/toplive2/user.png"
+						},
+						{
+							"key": "otp",
+							"value": "11111",
+							"description": "between 3,8 numbers",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "eg",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "m",
+							"type": "text"
+						},
+						{
+							"key": "birth_date",
+							"value": "1982-05-01",
+							"description": "Date Of Birth (YYYY-mm-dd), before today",
+							"type": "text"
+						}
+					]
 				},
 				"url": {
-					"raw": "{{base_url}}users/current",
+					"raw": "{{base_url}}api/users/storeByPhone",
 					"host": [
-						"{{base_url}}users"
+						"{{base_url}}api"
 					],
 					"path": [
+						"users",
+						"storeByPhone"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "user.updateUserData",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "MAGDYYYYY",
+							"type": "text"
+						},
+						{
+							"key": "mobile",
+							"value": "01153504635",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "magdy123",
+							"type": "text"
+						},
+						{
+							"key": "_method",
+							"value": "post",
+							"type": "text"
+						},
+						{
+							"key": "pic",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "old_pic",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "otp",
+							"value": "11111",
+							"description": "between 3,8 numbers",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "eg",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "m",
+							"type": "text"
+						},
+						{
+							"key": "birth_date",
+							"value": "1982-05-01",
+							"description": "Date Of Birth (YYYY-mm-dd), before today",
+							"type": "text"
+						},
+						{
+							"key": "token",
+							"value": "39|cZJsSEzgCaAIThrqBZPhIKjKKw4jV39LnkssEW0e",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/updateUserData",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"updateUserData"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "user.updateUserImage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "_method",
+							"value": "post",
+							"type": "text"
+						},
+						{
+							"key": "pic",
+							"type": "file",
+							"src": "/C:/xampp7.4/htdocs/toplive/assets/images/tm-easy-profile.jpg"
+						},
+						{
+							"key": "token",
+							"value": "39|cZJsSEzgCaAIThrqBZPhIKjKKw4jV39LnkssEW0e",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/updateUserImage",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"updateUserImage"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "user.loginByFacebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "sadad",
+							"type": "text"
+						},
+						{
+							"key": "mobile",
+							"value": "01153504632",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "sdsd@gsafdgsa.com",
+							"type": "text"
+						},
+						{
+							"key": "_method",
+							"value": "put",
+							"type": "text"
+						},
+						{
+							"key": "pic",
+							"value": "ddddddddddd",
+							"description": "facebook image full path",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "eg",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "m",
+							"type": "text"
+						},
+						{
+							"key": "birth_date",
+							"value": "2023-05-01",
+							"description": "Date Of Birth (YYYY-mm-dd), before today",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/loginByFacebook",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"loginByFacebook"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "user.loginByGoogle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 400ms\", function (){",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "sadad",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "sdsd@gxsafdgsa.com",
+							"type": "text"
+						},
+						{
+							"key": "_method",
+							"value": "put",
+							"type": "text"
+						},
+						{
+							"key": "pic",
+							"value": "ddddddddddd",
+							"description": "google image full path",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "eg",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "m",
+							"type": "text"
+						},
+						{
+							"key": "birth_date",
+							"value": "2023-05-01",
+							"description": "Date Of Birth (YYYY-mm-dd), before today",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/loginByGoogle",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"loginByGoogle"
+					]
+				},
+				"description": "creates new user, automatic creates **OTP** code if mobile is filled\n\n@params String name required\n\n@params String mobile optional\n\n@params String email optional|email\n\n@params String country required|max:255\n\n@params Char gender required|in:m,f\n\n@params String password required|min:8"
+			},
+			"response": []
+		},
+		{
+			"name": "users.current",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "token",
+							"value": "28|WIR2iEhgycVce3XSQj5nwZ8bB8OAdFl59My4bnZE",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/current",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
 						"current"
 					]
 				},
@@ -281,21 +743,62 @@
 							"key": "password",
 							"value": "admin!123!!",
 							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}api/users/loginByEmail",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"users",
+						"loginByEmail"
+					]
+				},
+				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
+			},
+			"response": []
+		},
+		{
+			"name": "users.loginByMobile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "APP_NAME",
+						"value": "TopLive",
+						"type": "text"
+					},
+					{
+						"key": "APP_KEY",
+						"value": "base64:V34CfyzAx3Jbe0+g33m+PA6PQ34lNF+U7X66rzR+Eas=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "mobile",
+							"value": "01153504635",
+							"type": "text"
 						},
 						{
-							"key": "_token",
-							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"key": "password",
+							"value": "magdy123",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "{{base_url}}users/loginByEmail",
+					"raw": "{{base_url}}api/users/loginByMobile",
 					"host": [
-						"{{base_url}}users"
+						"{{base_url}}api"
 					],
 					"path": [
-						"loginByEmail"
+						"users",
+						"loginByMobile"
 					]
 				},
 				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
@@ -323,12 +826,12 @@
 					"formdata": [
 						{
 							"key": "mobile",
-							"value": "55124566987",
+							"value": "01028622852",
 							"type": "text"
 						},
 						{
 							"key": "otp",
-							"value": "",
+							"value": "11111",
 							"type": "text"
 						},
 						{
@@ -353,7 +856,7 @@
 			"response": []
 		},
 		{
-			"name": "users.new_otp",
+			"name": "users.newOtp",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -373,29 +876,24 @@
 					"formdata": [
 						{
 							"key": "mobile",
-							"value": "55124566987",
+							"value": "01153504631",
 							"type": "text"
 						},
 						{
 							"key": "otp",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "_token",
-							"value": "WhHOQ0KmDqMnDrbD4FEHSVTZfhMt5X8kR3HVAH0i",
+							"value": "11113",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "{{base_url}}api/users/verifyOtp",
+					"raw": "{{base_url}}api/users/newOtp",
 					"host": [
 						"{{base_url}}api"
 					],
 					"path": [
 						"users",
-						"verifyOtp"
+						"newOtp"
 					]
 				},
 				"description": "StartFragment\n\nlogin user by email and password\n\nStartFragment\n\n@method POST \n\n@param string $email user email\n\n@param string password user password\n\n@param string _token\n\nEndFragment\n\n  \n  \n\nEndFragment"
