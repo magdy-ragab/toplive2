@@ -59,10 +59,10 @@ class UserController extends Controller
             'mobile' => 'required|unique:users,mobile',
             'pic' => 'nullable|image|max:2048', // max size of 2MB
             'password' => 'required|string|min:8',
-            'country' => 'required|max:255',
-            'gender' => 'required',
-            "birth_date"=> ['required', 'date', 'before:today'],
-            'otp' => 'required|integer|digits_between:3,8'
+            'country' => 'nullable|max:255',
+            'gender' => 'nullable',
+            "birth_date"=> ['nullable', 'date', 'before:today'],
+            // 'otp' => 'required|integer|digits_between:3,8'
         ]);
 
         if ($validator->fails()) {
@@ -78,13 +78,13 @@ class UserController extends Controller
             }
 
             $user = User::create($validatedData);
-            $this->generateOtp($user->id, request('otp'));
+            // $this->generateOtp($user->id, request('otp'));
             $this->loginById($user->id);
 
             return response()->json([
                 'token'     => $user->createToken('app')->plainTextToken ,
                 'user_data' => User::find($user->id) ,
-                'otp'       => (int) request('otp') ,
+                // 'otp'       => (int) request('otp') ,
             ], 201);
 
         } catch (\Exception $e) {
@@ -120,9 +120,15 @@ class UserController extends Controller
         // Find the user with the given email or mobile number
         $user = null;
         if ($request->has('email')) {
-            $user = User::where('email', $request->email)->first();
+            if ( User::where(['email'=>$request->email])->first() ) {
+                return response()->json(['errors' => "email exists. are you trying to login by google?"], 400);
+            }
+            $user = User::where(['email'=> $request->email,'login_by' => 'facebook'])->first();
         } elseif ($request->has('mobile')) {
-            $user = User::where('mobile', $request->mobile)->first();
+            if ( User::where(['mobile'=>$request->mobile])->first() ) {
+                return response()->json(['errors' => "mobile exists. are you trying to login by google?"], 400);
+            }
+            $user = User::where(['mobile'=>$request->mobile,'login_by' => 'facebook'])->first();
         }
 
         // If the user doesn't exist, create a new user
@@ -172,10 +178,13 @@ class UserController extends Controller
         }
 
         // Find the user with the given email
-        $user = User::where('email', $request->email)->first();
+        $user = User::where(['email'=>$request->email,'login_by' => 'google'])->first();
 
         // If the user doesn't exist, create a new user
         if (!$user) {
+            if ( User::where(['email'=>$request->email])->first() ) {
+                return response()->json(['errors' => "email exists. are you trying to login by facebook?"], 400);
+            }
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
