@@ -49,6 +49,7 @@ Route::post('/users/newOtp', [UserController::class,'newOtp']);
 
 
 Route::post('/agoraToken', [StreamController::class,'agoraToken']);
+Route::post('/createAgoraRoom', [StreamController::class,'createRoom']);
 
 
 

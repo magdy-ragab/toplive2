@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class StreamController extends Controller
@@ -16,10 +17,18 @@ class StreamController extends Controller
     public function agoraToken(Request $request)
     {
         // Validate the request parameters
-        $validatedData = $request->validate([
-            'room_name' => 'required|string',
-            'app_id' => 'required|integer',
+        $validatedData = Validator::make(request()->all(),[
+            'room_name' => 'nullable|string',
+            'app_id' => 'required|string',
         ]);
+
+        if ($validatedData->fails()) {
+            return response()->json([
+                'errors' => $validatedData->messages(),
+            ], 403);
+        }
+
+        $validatedData = $validatedData->validated();
 
         // Get the validated room name and app ID
         $room_name = $validatedData['room_name'];
@@ -62,7 +71,15 @@ class StreamController extends Controller
             // Return the token as a JSON response
             return response()->json(['token' => $result["rtcToken"]]);
         } else {
-            return response()->json(['error' => "token is not present"], 500);
+            return response()->json(['error' => "token is not present", "result"=>$result], 500);
         }
+    }
+
+
+    # ##########################################################
+
+    function createRoom() {
+
+
     }
 }
