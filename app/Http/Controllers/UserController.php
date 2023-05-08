@@ -10,6 +10,7 @@ use \App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
@@ -413,23 +414,23 @@ public function updateUserData(Request $request)
     function getCurrentUser( Request $request ) {
         $token = $request->token;
 
-    if (!$token) {
+        if (!$token) {
+            return response()->json([
+                'msg' => 'Token not found in request',
+            ], 401);
+        }
+
+        $user = $this->_getUserByToken($token);
+
+        if (!$user) {
+            return response()->json([
+                'msg' => 'Invalid token',
+            ], 401);
+        }
+
         return response()->json([
-            'msg' => 'Token not found in request',
-        ], 401);
-    }
-
-    $user = PersonalAccessToken::findToken($token)?->tokenable;
-
-    if (!$user) {
-        return response()->json([
-            'msg' => 'Invalid token',
-        ], 401);
-    }
-
-    return response()->json([
-        'user' => $user,
-    ]);
+            'user' => $user,
+        ]);
     }
 # ##########################################################
     /**
@@ -655,5 +656,39 @@ public function updateUserData(Request $request)
     # ##########################################################
     private function getTokenFromRequest( ) {
         return request('token');
+    }
+    # ##########################################################
+    /**
+     * Retrieve the user associated with the given access token.
+     *
+     * @param string $token The access token string.
+     * @return User|null The user associated with the token, or null if the token is invalid or the user cannot be found.
+     * @throws InvalidArgumentException If the $token parameter is empty or not a string.
+    */
+    function _getUserByToken(string $token): ?User
+    {
+        // Check if the token parameter is empty or not a string
+        if (empty($token)) {
+            throw new InvalidArgumentException('Token parameter cannot be empty.');
+        }
+
+        // Find the token object corresponding to the given token
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        // If the token is invalid, return null
+        if (!$accessToken) {
+            return null;
+        }
+
+        // Get the user associated with the token
+        $tokenable = $accessToken->tokenable;
+
+        // If the tokenable property is not an instance of the User class, return null
+        if (!$tokenable instanceof User) {
+            return null;
+        }
+
+        // Return the user associated with the token
+        return $tokenable;
     }
 }
